@@ -23,12 +23,14 @@ import type {
   LikeResponse,
   LoginBody,
   MessageResponse,
+  Notification,
   PlatformStats,
   RegisterBody,
   Script,
   ScriptListResponse,
   User,
   UserProfile,
+  VisitorResponse,
   ListScriptsParams,
 } from "./api.schemas";
 
