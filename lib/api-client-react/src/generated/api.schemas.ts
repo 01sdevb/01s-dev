@@ -19,7 +19,31 @@ export type UserProfile = {
   username: string;
   scriptCount: number;
   totalLikes: number;
+  followerCount: number;
+  followingCount: number;
+  isFollowedByMe: boolean;
+  isMe: boolean;
   createdAt: string;
+  scripts: Script[];
+};
+
+export type FollowResponse = {
+  following: boolean;
+  followers: number;
+};
+
+export type FollowUserItem = {
+  id: number;
+  username: string;
+  followedAt: string;
+  isFollowedByMe: boolean;
+};
+
+export type FollowUsersResponse = {
+  users: FollowUserItem[];
+};
+
+export type LikedScriptsResponse = {
   scripts: Script[];
 };
 
@@ -103,7 +127,7 @@ export type Notification = {
   actorUsername: string | null;
   scriptId: number | null;
   scriptTitle: string | null;
-  type: 'like' | 'comment';
+  type: 'like' | 'comment' | 'follow';
   message: string;
   isRead: boolean;
   createdAt: string;

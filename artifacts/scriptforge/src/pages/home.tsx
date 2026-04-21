@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Flame, LayoutGrid, Users, ThumbsUp, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ListScriptsSort } from "@workspace/api-client-react/src/generated/api.schemas";
+import type { ListScriptsSort } from "@workspace/api-client-react";
 
 const CATEGORIES = ["All", "GUI", "Admin", "Hub", "FPS", "Tycoon", "Simulator", "RPG", "Other"];
 

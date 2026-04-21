@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NotificationsBell } from "@/components/notifications-bell";
+import { GlobalAdsterraScripts, AdsterraAd } from "@/components/adsterra-ad";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useTheme();
@@ -23,6 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <GlobalAdsterraScripts />
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -138,6 +140,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1 flex flex-col">
         {children}
+        <div className="container mx-auto px-4 py-8 flex justify-center">
+          <AdsterraAd format="300x250" />
+        </div>
       </main>
 
       <footer className="border-t border-border/40 py-8 bg-muted/20">

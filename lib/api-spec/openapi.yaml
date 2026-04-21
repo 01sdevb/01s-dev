@@ -332,6 +332,111 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /users/{username}/follow:
+    post:
+      operationId: followUser
+      tags: [users]
+      summary: Follow a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Followed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: unfollowUser
+      tags: [users]
+      summary: Unfollow a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unfollowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{username}/followers:
+    get:
+      operationId: getUserFollowers
+      tags: [users]
+      summary: List a user's followers
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Followers list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUsersResponse"
+
+  /users/{username}/following:
+    get:
+      operationId: getUserFollowing
+      tags: [users]
+      summary: List the users a user is following
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Following list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowUsersResponse"
+
+  /users/{username}/likes:
+    get:
+      operationId: getUserLikedScripts
+      tags: [users]
+      summary: List scripts a user has liked
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Liked scripts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikedScriptsResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -409,6 +514,14 @@ components:
           type: integer
         totalLikes:
           type: integer
+        followerCount:
+          type: integer
+        followingCount:
+          type: integer
+        isFollowedByMe:
+          type: boolean
+        isMe:
+          type: boolean
         createdAt:
           type: string
           format: date-time
@@ -416,7 +529,48 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Script"
-      required: [id, username, scriptCount, totalLikes, createdAt, scripts]
+      required: [id, username, scriptCount, totalLikes, followerCount, followingCount, isFollowedByMe, isMe, createdAt, scripts]
+
+    FollowResponse:
+      type: object
+      properties:
+        following:
+          type: boolean
+        followers:
+          type: integer
+      required: [following, followers]
+
+    FollowUserItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        followedAt:
+          type: string
+          format: date-time
+        isFollowedByMe:
+          type: boolean
+      required: [id, username, followedAt, isFollowedByMe]
+
+    FollowUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/FollowUserItem"
+      required: [users]
+
+    LikedScriptsResponse:
+      type: object
+      properties:
+        scripts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Script"
+      required: [scripts]
 
     AuthResponse:
       type: object

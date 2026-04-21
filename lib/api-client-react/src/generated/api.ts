@@ -19,7 +19,10 @@ import type {
 import type {
   AuthResponse,
   CreateScriptBody,
+  FollowResponse,
+  FollowUsersResponse,
   HealthStatus,
+  LikedScriptsResponse,
   LikeResponse,
   LoginBody,
   MessageResponse,
@@ -704,3 +707,168 @@ export const markAllNotificationsRead = async (options?: RequestInit): Promise<M
     method: "POST",
     credentials: "include",
   });
+
+// ─── Users: Follow ────────────────────────────────────────────────────────────
+
+export const getFollowUserUrl = (username: string) => `/api/users/${username}/follow`;
+
+export const followUser = async (username: string, options?: RequestInit): Promise<FollowResponse> =>
+  customFetch<FollowResponse>(getFollowUserUrl(username), {
+    ...options,
+    method: "POST",
+    credentials: "include",
+  });
+
+export const getFollowUserMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof followUser>>, TError, { username: string }, TContext>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<Awaited<ReturnType<typeof followUser>>, TError, { username: string }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof followUser>>, { username: string }> = ({ username }) =>
+    followUser(username, requestOptions);
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useFollowUser = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof followUser>>, TError, { username: string }, TContext>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<Awaited<ReturnType<typeof followUser>>, TError, { username: string }, TContext> => {
+  return useMutation(getFollowUserMutationOptions(options));
+};
+
+// ─── Users: Unfollow ──────────────────────────────────────────────────────────
+
+export const unfollowUser = async (username: string, options?: RequestInit): Promise<FollowResponse> =>
+  customFetch<FollowResponse>(getFollowUserUrl(username), {
+    ...options,
+    method: "DELETE",
+    credentials: "include",
+  });
+
+export const getUnfollowUserMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof unfollowUser>>, TError, { username: string }, TContext>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<Awaited<ReturnType<typeof unfollowUser>>, TError, { username: string }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof unfollowUser>>, { username: string }> = ({ username }) =>
+    unfollowUser(username, requestOptions);
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useUnfollowUser = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof unfollowUser>>, TError, { username: string }, TContext>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<Awaited<ReturnType<typeof unfollowUser>>, TError, { username: string }, TContext> => {
+  return useMutation(getUnfollowUserMutationOptions(options));
+};
+
+// ─── Users: Followers ─────────────────────────────────────────────────────────
+
+export const getGetUserFollowersUrl = (username: string) => `/api/users/${username}/followers`;
+
+export const getUserFollowers = async (username: string, options?: RequestInit): Promise<FollowUsersResponse> =>
+  customFetch<FollowUsersResponse>(getGetUserFollowersUrl(username), {
+    ...options,
+    method: "GET",
+    credentials: "include",
+  });
+
+export const getGetUserFollowersQueryKey = (username: string) =>
+  [`/api/users/${username}/followers`] as const;
+
+export function useGetUserFollowers<
+  TData = Awaited<ReturnType<typeof getUserFollowers>>,
+  TError = ErrorType<unknown>,
+>(
+  username: string,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getUserFollowers>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetUserFollowersQueryKey(username);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserFollowers>>> = ({ signal }) =>
+    getUserFollowers(username, { signal, ...requestOptions });
+  const merged = { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserFollowers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+  const query = useQuery(merged) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  return { ...query, queryKey: merged.queryKey };
+}
+
+// ─── Users: Following ─────────────────────────────────────────────────────────
+
+export const getGetUserFollowingUrl = (username: string) => `/api/users/${username}/following`;
+
+export const getUserFollowing = async (username: string, options?: RequestInit): Promise<FollowUsersResponse> =>
+  customFetch<FollowUsersResponse>(getGetUserFollowingUrl(username), {
+    ...options,
+    method: "GET",
+    credentials: "include",
+  });
+
+export const getGetUserFollowingQueryKey = (username: string) =>
+  [`/api/users/${username}/following`] as const;
+
+export function useGetUserFollowing<
+  TData = Awaited<ReturnType<typeof getUserFollowing>>,
+  TError = ErrorType<unknown>,
+>(
+  username: string,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getUserFollowing>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetUserFollowingQueryKey(username);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserFollowing>>> = ({ signal }) =>
+    getUserFollowing(username, { signal, ...requestOptions });
+  const merged = { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserFollowing>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+  const query = useQuery(merged) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  return { ...query, queryKey: merged.queryKey };
+}
+
+// ─── Users: Liked Scripts ─────────────────────────────────────────────────────
+
+export const getGetUserLikedScriptsUrl = (username: string) => `/api/users/${username}/likes`;
+
+export const getUserLikedScripts = async (username: string, options?: RequestInit): Promise<LikedScriptsResponse> =>
+  customFetch<LikedScriptsResponse>(getGetUserLikedScriptsUrl(username), {
+    ...options,
+    method: "GET",
+    credentials: "include",
+  });
+
+export const getGetUserLikedScriptsQueryKey = (username: string) =>
+  [`/api/users/${username}/likes`] as const;
+
+export function useGetUserLikedScripts<
+  TData = Awaited<ReturnType<typeof getUserLikedScripts>>,
+  TError = ErrorType<unknown>,
+>(
+  username: string,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getUserLikedScripts>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetUserLikedScriptsQueryKey(username);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserLikedScripts>>> = ({ signal }) =>
+    getUserLikedScripts(username, { signal, ...requestOptions });
+  const merged = { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserLikedScripts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+  const query = useQuery(merged) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  return { ...query, queryKey: merged.queryKey };
+}
