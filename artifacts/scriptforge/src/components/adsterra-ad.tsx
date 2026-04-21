@@ -80,6 +80,31 @@ export function GlobalAdsterraScripts() {
     const socialBar = document.createElement("script");
     socialBar.src = "https://pl29188290.profitablecpmratenetwork.com/65/85/2a/65852a316e4c3f6632b3d6f0c450dae9.js";
     document.body.appendChild(socialBar);
+
+    let lastTrigger = 0;
+    const COOLDOWN_MS = 30_000;
+
+    const handler = (e: MouseEvent) => {
+      if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const anchor = target.closest("a") as HTMLAnchorElement | null;
+      const button = target.closest("button") as HTMLButtonElement | null;
+      const trigger = anchor || button;
+      if (!trigger) return;
+      if (trigger.closest("[data-no-ad]")) return;
+      const now = Date.now();
+      if (now - lastTrigger < COOLDOWN_MS) return;
+      lastTrigger = now;
+      try {
+        window.open(SMARTLINK_URL, "_blank", "noopener,noreferrer");
+      } catch {
+        /* popup blocked */
+      }
+    };
+
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
   }, []);
 
   return null;
